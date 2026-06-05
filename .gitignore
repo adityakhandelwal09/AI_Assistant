@@ -5,3 +5,4 @@ __pycache__/
 config/credentials.json
 config/token.json
 *.DS_Store
+personal_agent_env/
