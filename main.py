@@ -2,12 +2,12 @@ from google import genai
 import datetime as datetime
 from dotenv import load_dotenv
 import os
-from tools.calendar_tools import get_events, create_event
+from tools.calendar_tools import get_events, create_event, delete_event
 
-get_events("2026-06-08")
-create_event("Kravitz Appointment", "Wisdom teet consultation", datetime.datetime(2026, 6, 10, 15, 40), datetime.datetime(2026, 6, 10, 16, 20), False)
-create_event("Aditi's Birthday", "", datetime.datetime(2026, 6, 19), datetime.datetime(2026, 6, 19), True)
-
+#get_events("2026-06-08")
+#create_event("Kravitz Appointment", "Wisdom teet consultation", datetime.datetime(2026, 6, 10, 15, 40), datetime.datetime(2026, 6, 10, 16, 20), False)
+#create_event("Aditi's Birthday", "", datetime.datetime(2026, 6, 19), datetime.datetime(2026, 6, 19), True)
+#delete_event("13qsl87u02874gll5c149087e8") 
 '''
 load_dotenv()
 

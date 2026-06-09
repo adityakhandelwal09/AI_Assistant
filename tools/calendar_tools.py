@@ -54,6 +54,10 @@ def create_event(title, description, start_datetime, end_datetime, all_day):
             }
         }
     created_event = service.events().insert(calendarId='primary', body=event).execute()
-    print(f"Event created: {created_event.get('htmlLink')}")
+    print(f"Event created: {created_event.get('htmlLink')}, ID: {created_event.get('id')}")
+
+def delete_event(event_id):
+    service.events().delete(calendarId='primary', eventId=event_id).execute()
+    print(f"Event with ID {event_id} deleted.")
 
     
