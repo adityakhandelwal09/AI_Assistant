@@ -1,6 +1,5 @@
-import datetime
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 from config.auth import get_calendar_service
 service = get_calendar_service()
 
@@ -28,3 +27,33 @@ def get_events(date_str):
         event_description = event.get("description", "No Description")
         print(f"Event: {event_name}, Start: {start_time}, End: {end_time}, ID: {event_id}, Description: {event_description}")
     return events
+
+def create_event(title, description, start_datetime, end_datetime, all_day):
+    if all_day:
+        event = {
+            "summary": title,
+            "description": description,
+            "start": {
+                "date": start_datetime.date().isoformat()
+            },
+            "end": {
+                "date": (end_datetime.date() + timedelta(days=1)).isoformat() #all-day events end the day after the last day of the event
+            }
+        }
+    else:
+        event = {
+            "summary": title,
+            "description": description,
+            "start": {
+                "dateTime": start_datetime.isoformat(),
+                "timeZone": "US/Eastern"
+            },
+            "end": {
+                "dateTime": end_datetime.isoformat(),
+                "timeZone": "US/Eastern"
+            }
+        }
+    created_event = service.events().insert(calendarId='primary', body=event).execute()
+    print(f"Event created: {created_event.get('htmlLink')}")
+
+    

@@ -1,9 +1,14 @@
 from google import genai
+import datetime as datetime
 from dotenv import load_dotenv
 import os
-from tools.calendar_tools import get_events
+from tools.calendar_tools import get_events, create_event
 
 get_events("2026-06-08")
+create_event("Kravitz Appointment", "Wisdom teet consultation", datetime.datetime(2026, 6, 10, 15, 40), datetime.datetime(2026, 6, 10, 16, 20), False)
+create_event("Aditi's Birthday", "", datetime.datetime(2026, 6, 19), datetime.datetime(2026, 6, 19), True)
+
+'''
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -14,3 +19,4 @@ response = client.models.generate_content(
 )
 
 print(response.text)
+'''
