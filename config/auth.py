@@ -6,10 +6,10 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 # If you change scopes, delete token.json and re-auth
-SCOPES = ["https://www.googleapis.com/auth/calendar"]
+SCOPES = ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/gmail.modify"]
 
 
-def get_calendar_service():
+def get_google_service(service_name, version):
     """
     Handles Google OAuth and returns a Google Calendar API service object.
     """
@@ -39,11 +39,5 @@ def get_calendar_service():
         with open(token_path, "wb") as token:
             pickle.dump(creds, token)
 
-    # Build Calendar API service
-    service = build("calendar", "v3", credentials=creds)
-    return service
-
-
-if __name__ == "__main__":
-    service = get_calendar_service()
-    print("Calendar service created:", service)
+    # Build google_specific API service
+    return build(service_name, version, credentials=creds)

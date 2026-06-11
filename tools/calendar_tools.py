@@ -1,7 +1,7 @@
 import pytz
 from datetime import datetime, timedelta
-from config.auth import get_calendar_service
-service = get_calendar_service()
+from config.auth import get_google_service
+service = get_google_service("calendar", "v3")
 
 def get_events(date_str):
     datetime_obj = datetime.fromisoformat(date_str) #use fromisoformat only when the input is in ISO format (YYYY-MM-DD) otherwise use strptime with the appropriate format string
