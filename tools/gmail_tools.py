@@ -50,3 +50,20 @@ def get_email_content(message_id):
     email_body = get_body_from_parts(parts)
     print(base64.urlsafe_b64decode(email_body).decode('utf-8'))
     return base64.urlsafe_b64decode(email_body).decode('utf-8')
+
+def draft_email(to, subject, body):
+    message = f"To: {to}\nSubject: {subject}\n\n{body}"
+    encoded_message = base64.urlsafe_b64encode(message.encode("utf-8")).decode("utf-8")
+    draft = {
+        "message": {
+            "raw": encoded_message
+
+        }
+    }
+    draft_response = service.users().drafts().create(userId="me", body=draft).execute()
+
+    return {
+        "draft_id": draft_response.get("id"),
+        "message_id": draft_response.get("message", {}).get("id"),
+        "status": "Draft created successfully"
+    }
