@@ -1,4 +1,4 @@
-get_events_function = {
+get_events_schema = {
     "name": "get_events",
     "description": "Retrieves the user's calendar events for a specific date. Use this when the user asks about their schedule, availability, or what's happening on a given day.",
     "parameters": {
@@ -13,7 +13,7 @@ get_events_function = {
     },
 }
 
-create_event_function = {
+create_event_schema = {
     "name": "create_event",
     "description": "Creates a new event on the user's Google Calendar. Use this when the user asks to add, schedule, or create a calendar event.",
     "parameters": {
@@ -44,7 +44,7 @@ create_event_function = {
     }
 }
 
-delete_event_function = {
+delete_event_schema = {
     "name": "delete_event",
     "description": "Deletes a calendar event by its event ID. Use this when the user asks to cancel or remove a calendar event.",
     "parameters": {
@@ -59,7 +59,7 @@ delete_event_function = {
     }
 }
 
-search_emails_function = {
+search_emails_schema = {
     "name": "search_emails",
     "description": "Searches the user's Gmail inbox using a query string. Use this when the user asks to find or look for emails.",
     "parameters": {
@@ -79,7 +79,7 @@ search_emails_function = {
     }
 }
 
-get_email_content_function = {
+get_email_content_schema = {
     "name": "get_email_content",
     "description": "Retrieves the full body text of a specific email. Use this after an email has been identified.",
     "parameters": {
@@ -94,7 +94,7 @@ get_email_content_function = {
     }
 }
 
-draft_email_function = {
+draft_email_schema = {
     "name": "draft_email",
     "description": "Creates a draft email in Gmail without sending it. Use this when the user asks to write or draft an email.",
     "parameters": {
