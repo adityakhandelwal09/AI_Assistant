@@ -9,11 +9,16 @@ from agents.agent import run_agent
 
 
 # Send request with function declarations
-prompt = f'''Today's date is {date.today()}
-            What's on my calendar for today? 
-            '''
 
-run_agent(prompt)
+content = []
+while True:
+  user_input = input("Ask Away: ")
+  if user_input == "quit":
+    break
+  response_text, content = run_agent(user_input, content)
+  print(response_text)
+  print()
+
 
 
 #get_events("2026-06-08")

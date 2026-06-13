@@ -25,10 +25,14 @@ def get_events(date_str):
         event_name = event.get("summary", "No Title")
         event_id = event.get("id")
         event_description = event.get("description", "No Description")
-        print(f"Event: {event_name}, Start: {start_time}, End: {end_time}, ID: {event_id}, Description: {event_description}")
+        #print(f"Event: {event_name}, Start: {start_time}, End: {end_time}, ID: {event_id}, Description: {event_description}")
     return events
 
-def create_event(title, description, start_datetime, end_datetime, all_day):
+def create_event(title, start_datetime, end_datetime, all_day, description=""):
+
+    start_datetime = datetime.fromisoformat(start_datetime)
+    end_datetime = datetime.fromisoformat(end_datetime)
+
     if all_day:
         event = {
             "summary": title,
