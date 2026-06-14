@@ -48,6 +48,8 @@ def get_email_content(message_id):
     msg = service.users().messages().get(userId="me", id=message_id, format="full").execute()
     parts = msg.get("payload", {}).get("parts", [])
     email_body = get_body_from_parts(parts)
+    if email_body is None:
+        email_body = msg.get("payload", {}).get("body", {}).get("data")
     print(base64.urlsafe_b64decode(email_body).decode('utf-8'))
     return base64.urlsafe_b64decode(email_body).decode('utf-8')
 

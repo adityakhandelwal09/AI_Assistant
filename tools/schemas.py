@@ -61,7 +61,7 @@ delete_event_schema = {
 
 search_emails_schema = {
     "name": "search_emails",
-    "description": "Searches the user's Gmail inbox using a query string. Use this when the user asks to find or look for emails.",
+    "description": "Searches the user's Gmail inbox using a query string. For searching by sender name use the 'from:' prefix and do not insert any name titles (Dr. Mrs. Ms, etc). For email addresses use 'from:email@example.com'. Keep queries simple — Gmail searches across all fields by default. When searching emails for multiple people or multiple events, search for each person or event separately",
     "parameters": {
         "type": "object",
         "properties": {
@@ -71,7 +71,7 @@ search_emails_schema = {
             },
             "max_results": {
                 "type": "integer",
-                "description": "Maximum number of emails to return",
+                "description": "Default is 5. Find 5 emails unless the user specifically asks for fewer or more results or there aren't 5 emails associated with the specific query.",
                 "default": 5
             }
         },

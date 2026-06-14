@@ -19,6 +19,10 @@ while True:
   print(response_text)
   print()
 
+for item in content:
+  print(item)
+  print("------")
+
 
 
 #get_events("2026-06-08")
@@ -26,7 +30,7 @@ while True:
 #create_event("Aditi's Birthday", "", datetime.datetime(2026, 6, 19), datetime.datetime(2026, 6, 19), True)
 #delete_event("13qsl87u02874gll5c149087e8") 
 
-#print(search_emails("subject:possible research opportunity"))
+#print(search_emails("from:Heath"))
 #get_email_content("195c850c48974ddc") 
 #print(draft_email("test@example.com", "Test Subject", "Test Body THIS WOULD BE SOOO COOOL IF IT WORKED"))
 
