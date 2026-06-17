@@ -116,3 +116,41 @@ draft_email_schema = {
         "required": ["to", "subject", "body"]
     }
 }
+
+search_messages_schema = {
+    "name": "search_messages",
+    "description": "Searches through the user's iMessage history for messages containing a specific keyword or phrase. Use this when the user asks about past conversations, what someone said, or wants to find messages about a specific topic.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "query": {
+                "type": "string",
+                "description": "The keyword or phrase to search for in messages. Use simple keywords like a person's name, topic, or phrase that would appear in the message text."
+            },
+            "limit": {
+                "type": "integer",
+                "description": "Maximum number of messages to return. Default is 10. Only increase if the user needs more context."
+            }
+        },
+        "required": ["query"]
+    }
+}
+
+get_conversation_schema = {
+    "name": "get_conversation",
+    "description": "Retrieves the recent conversation history with a specific contact by their phone number. Use this when the user wants to see their full conversation with a specific person. Phone number must be in +1XXXXXXXXXX format.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "phone_number": {
+                "type": "string",
+                "description": "The contact's phone number in +1XXXXXXXXXX format, e.g. +12025551234. No dashes or spaces."
+            },
+            "limit": {
+                "type": "integer",
+                "description": "Maximum number of messages to return. Default is 20. Increase if the user asks or mentions a larger number"
+            }
+        },
+        "required": ["phone_number"]
+    }
+}
