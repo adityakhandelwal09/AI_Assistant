@@ -3,6 +3,14 @@ from datetime import datetime, timedelta
 from config.auth import get_google_service
 service = get_google_service("calendar", "v3")
 
+'''
+================================
+need to create an edit_event() 
+function that calls delete_event 
+and create_event
+================================
+'''
+
 def get_events(date_str):
     datetime_obj = datetime.fromisoformat(date_str) #use fromisoformat only when the input is in ISO format (YYYY-MM-DD) otherwise use strptime with the appropriate format string
     time_min = datetime_obj.replace(hour=0, minute=0, second=0)

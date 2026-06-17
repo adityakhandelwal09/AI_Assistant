@@ -8,11 +8,12 @@ from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
 from tools.imessage_tools import search_messages, get_conversation
 
+'''
 #results = search_messages("dance practice")
 results = get_conversation("+15715235960")
 for msg in results:
     print(msg)
-
+'''
 
 
 '''
@@ -31,7 +32,7 @@ for item in content:
 '''
 
 
-#get_events("2026-06-08")
+get_events("2026-06-08")
 #create_event("Kravitz Appointment", "Wisdom teet consultation", datetime.datetime(2026, 6, 10, 15, 40), datetime.datetime(2026, 6, 10, 16, 20), False)
 #create_event("Aditi's Birthday", "", datetime.datetime(2026, 6, 19), datetime.datetime(2026, 6, 19), True)
 #delete_event("13qsl87u02874gll5c149087e8") 
