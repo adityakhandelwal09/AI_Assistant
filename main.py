@@ -6,10 +6,16 @@ import os
 from tools.calendar_tools import get_events, create_event, delete_event
 from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
+from tools.imessage_tools import search_messages, get_conversation
+
+#results = search_messages("dance practice")
+results = get_conversation("+15715235960")
+for msg in results:
+    print(msg)
 
 
-# Send request with function declarations
 
+'''
 content = []
 while True:
   user_input = input("Ask Away: ")
@@ -22,7 +28,7 @@ while True:
 for item in content:
   print(item)
   print("------")
-
+'''
 
 
 #get_events("2026-06-08")
