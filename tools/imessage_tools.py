@@ -58,6 +58,7 @@ def get_conversation(phone_number, limit=20):
         ''', (phone_number, limit))
         
         results = cursor.fetchall()
+    
 
     #build a guid -> text map for reply lookup
     guid_to_text = {}

@@ -1,9 +1,11 @@
 from google import genai
 from google.genai import types
 from datetime import date, timedelta
-from tools.schemas import get_events_schema, create_event_schema, delete_event_schema, search_emails_schema, get_email_content_schema, draft_email_schema
+from tools.schemas import get_events_schema, create_event_schema, delete_event_schema, search_emails_schema, get_email_content_schema, draft_email_schema, search_messages_schema, get_conversation_schema, search_drive_schema, get_file_content_schema
 from tools.calendar_tools import get_events, create_event, delete_event
 from tools.gmail_tools import search_emails, get_email_content, draft_email
+from tools.imessage_tools import search_messages, get_conversation
+from tools.google_drive_tools import search_drive, get_file_content
 
 def run_agent(prompt, content):
     client = genai.Client()
@@ -14,12 +16,16 @@ def run_agent(prompt, content):
             delete_event_schema, 
             search_emails_schema,
             get_email_content_schema,
-            draft_email_schema
+            draft_email_schema,
+            search_messages_schema,
+            get_conversation_schema, 
+            search_drive_schema, 
+            get_file_content_schema
         ]
     )
     config = types.GenerateContentConfig(
         tools=[tools],
-        system_instruction=f"Today's date is {date.today()}. You are a personal assistant with access to the user's calendar and email"
+        system_instruction=f"Today's date is {date.today()}. You are a personal assistant with access to the user's calendar, email, messages, an google drive"
     )
 
     #append to content from the start so model has a recurring memory
@@ -41,7 +47,12 @@ def run_agent(prompt, content):
         "delete_event": delete_event,
         "search_emails": search_emails,
         "get_email_content": get_email_content,
-        "draft_email": draft_email
+        "draft_email": draft_email,
+        "search_messages": search_messages,
+        "get_conversation": get_conversation,
+        "search_drive": search_drive,
+        "get_file_content": get_file_content
+
     }
 
     if not response.candidates[0].content.parts[0].function_call:
