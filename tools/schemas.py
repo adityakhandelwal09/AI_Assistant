@@ -59,6 +59,41 @@ delete_event_schema = {
     }
 }
 
+edit_event_schema = {
+    "name": "edit_event",
+    "description": "Edits an existing calendar event. Use this when the user wants to modify the title, time, date, or description of an event that already exists.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "title": {
+                "type": "string",
+                "description": "Title of the calendar event"
+            },
+            "event_id": {
+                "type": "string",
+                "description": "The ID of the calendar event to edit"
+            },
+            "description": {
+                "type": "string",
+                "description": "Optional description or notes for the event"
+            },
+            "start_datetime": {
+                "type": "string",
+                "description": "Start date and time in ISO 8601 format (YYYY-MM-DDTHH:MM:SS)"
+            },
+            "end_datetime": {
+                "type": "string",
+                "description": "End date and time in ISO 8601 format (YYYY-MM-DDTHH:MM:SS)"
+            },
+            "all_day": {
+                "type": "boolean",
+                "description": "Whether the event lasts all day"
+            }
+        },
+        "required": ["title", "event_id", "start_datetime", "end_datetime", "all_day"]
+    }
+}
+
 search_emails_schema = {
     "name": "search_emails",
     "description": "Searches the user's Gmail inbox using a query string. For searching by sender name use the 'from:' prefix and do not insert any name titles (Dr. Mrs. Ms, etc). For email addresses use 'from:email@example.com'. Keep queries simple — Gmail searches across all fields by default. When searching emails for multiple people or multiple events, search for each person or event separately",
@@ -152,5 +187,40 @@ get_conversation_schema = {
             }
         },
         "required": ["phone_number"]
+    }
+}
+
+search_drive_schema = {
+    "name": "search_drive",
+    "description": "Searches the user's Google Drive for files whose contents or metadata that match a query string. Use this when the user asks to find documents, slides, spreadsheets, PDFs, or folders by keyword.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "query": {
+                "type": "string",
+                "description": "Keyword or phrase to search for in Google Drive file contents and metadata (name, text body, etc.)."
+            },
+            "max_results": {
+                "type": "integer",
+                "description": "Maximum number of files to return. Default is 5. Increase only if the user asks for more results.",
+                "default": 5
+            }
+        },
+        "required": ["query"]
+    }
+}
+
+get_file_content_schema = {
+    "name": "get_file_content",
+    "description": "Retrieves the plain text content of a Google Drive file by file ID. Use this only after a file has been identified (e.g., via search_drive). Only works for files that can be exported as text.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "file_id": {
+                "type": "string",
+                "description": "The unique Google Drive file ID of the document to read. This should come from a previous search result.",
+            }
+        },
+        "required": ["file_id"]
     }
 }

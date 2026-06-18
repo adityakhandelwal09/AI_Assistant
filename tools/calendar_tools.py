@@ -36,40 +36,59 @@ def get_events(date_str):
         #print(f"Event: {event_name}, Start: {start_time}, End: {end_time}, ID: {event_id}, Description: {event_description}")
     return events
 
-def create_event(title, start_datetime, end_datetime, all_day, description=""):
-
+def build_event_body(title, start_datetime, end_datetime, all_day, description=""):
     start_datetime = datetime.fromisoformat(start_datetime)
     end_datetime = datetime.fromisoformat(end_datetime)
+    body = {
+        "summary": title,
+        "description": description,
+    }
 
     if all_day:
-        event = {
-            "summary": title,
-            "description": description,
-            "start": {
-                "date": start_datetime.date().isoformat()
-            },
-            "end": {
-                "date": (end_datetime.date() + timedelta(days=1)).isoformat() #all-day events end the day after the last day of the event
-            }
+        body["start"] = {
+            "date": start_datetime.date().isoformat()
+        }
+        body["end"] = {
+            "date": (end_datetime.date() + timedelta(days=1)).isoformat() #all-day events end the day after the last day of the event
         }
     else:
-        event = {
-            "summary": title,
-            "description": description,
-            "start": {
+        body["start"] = {
                 "dateTime": start_datetime.isoformat(),
                 "timeZone": "US/Eastern"
-            },
-            "end": {
+        },
+        body["end"] = {
                 "dateTime": end_datetime.isoformat(),
                 "timeZone": "US/Eastern"
-            }
         }
-    created_event = service.events().insert(calendarId='primary', body=event).execute()
+    return body
+
+def create_event(title, start_datetime, end_datetime, all_day, description=""):
+    body = build_event_body(title, start_datetime, end_datetime, all_day, description)
+    created_event = service.events().insert(calendarId='primary', body=body).execute()
     print(f"Event created: {created_event.get('htmlLink')}, ID: {created_event.get('id')}")
+    return {
+        "event_id": created_event.get("id"),
+        "html_link": created_event.get("htmlLink"),
+        "status": "created"
+    }
 
 def delete_event(event_id):
     service.events().delete(calendarId='primary', eventId=event_id).execute()
     print(f"Event with ID {event_id} deleted.")
+    return {
+        "event_id": event_id,
+        "status": "deleted"
+    }
+
+def edit_event(title, start_datetime, end_datetime, all_day, event_id, description=""):
+    body = build_event_body(title, start_datetime, end_datetime, all_day, description)
+    updated_event = service.events().patch(calendarId="primary", eventId=event_id, body=body).execute()
+    print(f"Event edited: {updated_event.get('htmlLink')}, ID: {updated_event.get('id')}")
+    return {
+        "event_id": updated_event.get("id"),
+        "html_link": updated_event.get("htmlLink"),
+        "status": "updated"
+    }
+
 
     

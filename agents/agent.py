@@ -49,7 +49,6 @@ def run_agent(prompt, content):
         return response.text, content
     
     while response.candidates[0].content.parts[0].function_call:
-        print("I am in the while loop")
         function_calls = []
         for part in response.candidates[0].content.parts:
             if part.function_call:
