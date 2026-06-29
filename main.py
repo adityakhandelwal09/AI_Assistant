@@ -1,23 +1,25 @@
 from google import genai
 import datetime as datetime
 from datetime import date, timedelta
-from dotenv import load_dotenv
 import os
-from tools.calendar_tools import get_events, create_event, delete_event
+from tools.calendar_tools import get_events, create_event, delete_event, edit_event
 from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
 from tools.imessage_tools import search_messages, get_conversation
 from tools.google_drive_tools import search_drive, get_file_content
+from dotenv import load_dotenv
 
+load_dotenv()
 
 #results = search_messages("dance practice")
-results = get_conversation("+15712686203")
-for m in results:
-    print(m["date"], "-", m["sender"], ":", m["text"])
+
+#results = get_conversation("+15712686203")
+#for m in results:
+#    print(m["date"], "-", m["sender"], ":", m["text"])
 
 
 
-'''
+print("Welcome to the Gemini Agent!")
 content = []
 while True:
   user_input = input("Ask Away: ")
@@ -26,7 +28,7 @@ while True:
   response_text, content = run_agent(user_input, content)
   print(response_text)
   print()
- ''' 
+
 
 '''
 for item in content:
