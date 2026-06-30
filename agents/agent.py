@@ -66,9 +66,15 @@ def run_agent(prompt, content):
 
         function_response_parts = []
         for function_call in function_calls:
-            function_name = function_dict[function_call.name]
-            function_call_args = dict(function_call.args)
-            result = function_name(**function_call_args)
+            try:
+                if function_call.name not in function_dict:
+                    raise KeyError(f"Unknown tool: {function_call.name}")
+                function_name = function_dict[function_call.name]
+                function_call_args = dict(function_call.args)
+                result = function_name(**function_call_args)
+            except Exception as e:
+                result = {"error": str(e), "tool": function_call.name}
+
             function_response_parts.append(
                 types.Part.from_function_response(
                     name=function_call.name,

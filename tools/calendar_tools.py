@@ -22,11 +22,15 @@ def get_events(date_str):
         if "T" in start_time:
             start_time = start_dt.strftime("%A, %B %d at %I:%M %p ET") #day of week, month, day, time in 12-hour format with AM/PM
             end_time = end_dt.strftime("%A, %B %d at %I:%M %p ET")
-        event_name = event.get("summary", "No Title")
-        event_id = event.get("id")
-        event_description = event.get("description", "No Description")
         #print(f"Event: {event_name}, Start: {start_time}, End: {end_time}, ID: {event_id}, Description: {event_description}")
-    return events
+        event_dict = { 
+            "title": event.get("summary", "No Title"),
+            "start": start_time,
+            "end": end_time,
+            "event_id": event.get("id"),
+            "description": event.get("description", "No Description"),
+        }
+    return event_dict
 
 def build_event_body(title, start_datetime, end_datetime, all_day, description=""):
     start_datetime = datetime.fromisoformat(start_datetime)
