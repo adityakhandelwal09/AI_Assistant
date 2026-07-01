@@ -2,7 +2,6 @@
 venv/
 __pycache__/
 *.pyc
-memory/*.json
 config/credentials.json
 config/token.json
 *.DS_Store

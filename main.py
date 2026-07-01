@@ -7,7 +7,6 @@ from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
 from tools.imessage_tools import search_messages, get_conversation
 from tools.google_drive_tools import search_drive, get_file_content
-from memory.context_memory import DEFAULT_MEMORY_PATH, load_context, save_context
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,18 +17,13 @@ load_dotenv()
 #for m in results:
 #    print(m["date"], "-", m["sender"], ":", m["text"])
 
-
-
 print("Welcome to the Gemini Agent!")
-content = load_context()
-if content:
-  print(f"Loaded {len(content)} saved memory items from {DEFAULT_MEMORY_PATH}.")
+content = []
 while True:
   user_input = input("Ask Away: ")
   if user_input == "quit":
     break
   response_text, content = run_agent(user_input, content)
-  save_context(content)
   print(response_text)
   print()
 
