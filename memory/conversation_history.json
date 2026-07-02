@@ -1,0 +1,202 @@
+[
+  {
+    "role": "user",
+    "text": "hello",
+    "timestamp": "2026-07-01 03:27 PM"
+  },
+  {
+    "role": "model",
+    "text": "Hello! How can I help you today?\n",
+    "timestamp": "2026-07-01 03:27 PM"
+  },
+  {
+    "role": "user",
+    "text": "do i have any events for today?",
+    "timestamp": "2026-07-01 03:27 PM"
+  },
+  {
+    "role": "model",
+    "text": "You have no events for today.",
+    "timestamp": "2026-07-01 03:27 PM"
+  },
+  {
+    "role": "user",
+    "text": "add playing tennis with nikhil justin and hrishi at 530",
+    "timestamp": "2026-07-01 03:27 PM"
+  },
+  {
+    "role": "model",
+    "text": "I'll add \"playing tennis with Nikhil, Justin, and Hrishi\" to your calendar for today. Will it be at 5:30 PM? And how long do you expect the event to last?",
+    "timestamp": "2026-07-01 03:27 PM"
+  },
+  {
+    "role": "user",
+    "text": "itll be at 530pm and prolly 2 hours",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "model",
+    "text": "I've added playing tennis with Nikhil, Justin, and Hrishi to your calendar today from 5:30 PM to 7:30 PM.",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "user",
+    "text": "can you see if i got any new messages from any of those 3 people",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "model",
+    "text": "Yes, I found a few recent messages:\n\n**Nikhil:**\n*   \"but until nikhil comes back we can still j play\" (July 1, 1:55 PM)\n\n**Justin:**\n*   \"bro i didn\u2019t even want her i was deadass j bored cuz bro hrishi and anthara u had aiyana justin had like isabelle like choice was made for me\" (June 29, 10:10 PM)\n\n**Hrishi:**\n*   \"No hrishi u werr 4th i thought\" (July 1, 2:03 PM)\n*   \"wait hrishi\" (July 1, 2:02 PM)\n*   \"He n hrishi r gonna throw hands now\" (July 1, 1:58 PM)",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "user",
+    "text": "ok than you",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "model",
+    "text": "You're welcome! Is there anything else I can help you with?",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "user",
+    "text": "have i gotten any pending emails from uva",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "model",
+    "text": "Yes, you have received several emails from UVA. Here are the 5 most recent ones:\n\n1.  **Subject:** Welcome New Hoos! Scholarships Available through the Alumni Association\n    **From:** UVA Alumni Association Scholarships <alumni-scholarships@mc.virginia.edu>\n    **Date:** May 15, 2026\n\n2.  **Subject:** Today's Admitted Student Celebration!\n    **From:** UVA Club of Loudoun <noreply@event.eventbrite.com>\n    **Date:** April 26, 2026\n\n3.  **Subject:** Sunday's Admitted Student Celebration\n    **From:** UVA Club of Loudoun <noreply@event.eventbrite.com>\n    **Date:** April 24, 2026\n\n4.  **Subject:** Thank You! Virtual Admitted Student Celebration\n    **From:** UVA Clubs <uvaclubs@mc.virginia.edu>\n    **Date:** April 20, 2026\n\n5.  **Subject:** Starting Soon! Today's Virtual Admitted Student Celebration\n    **From:** UVA Clubs <noreply@event.eventbrite.com>\n    **Date:** April 16, 2026",
+    "timestamp": "2026-07-01 03:28 PM"
+  },
+  {
+    "role": "user",
+    "text": "can you draft an email to rkhand01@hotmail.com telling him that I am going to drive to orientation on july 6/7 so i will be taking the car",
+    "timestamp": "2026-07-01 03:29 PM"
+  },
+  {
+    "role": "model",
+    "text": "I've drafted an email to rkhand01@hotmail.com with the subject \"Orientation on July 6/7 - Car Usage\" and the body:\n\n\"Hi,\n\nI just wanted to let you know that I'll be driving to orientation on July 6th and 7th, so I will be taking the car on those days.\n\nThanks!\"",
+    "timestamp": "2026-07-01 03:29 PM"
+  },
+  {
+    "role": "user",
+    "text": "wait can you cc ankit khandelwal to that email as well",
+    "timestamp": "2026-07-01 03:30 PM"
+  },
+  {
+    "role": "model",
+    "text": "I am sorry, I cannot fulfill this request. The `draft_email` function does not support CCing recipients. I can only specify a single \"to\" recipient. If you'd like, I can create a new draft email with Ankit Khandelwal as the \"to\" recipient, or include him in the body of the email to rkhand01@hotmail.com.",
+    "timestamp": "2026-07-01 03:30 PM"
+  },
+  {
+    "role": "user",
+    "text": "can you just create a new email with him as the recipient",
+    "timestamp": "2026-07-01 03:30 PM"
+  },
+  {
+    "role": "model",
+    "text": "I can do that. What is Ankit Khandelwal's email address, and should the subject and body of the email be the same as the previous draft?",
+    "timestamp": "2026-07-01 03:30 PM"
+  },
+  {
+    "role": "user",
+    "text": "amtron521@gmail.com and what was the subject of the email",
+    "timestamp": "2026-07-01 03:30 PM"
+  },
+  {
+    "role": "model",
+    "text": "The subject of the previous email was \"Orientation on July 6/7 - Car Usage\".",
+    "timestamp": "2026-07-01 03:31 PM"
+  },
+  {
+    "role": "user",
+    "text": "yeah thats good",
+    "timestamp": "2026-07-01 03:31 PM"
+  },
+  {
+    "role": "model",
+    "text": "I've drafted a new email to amtron521@gmail.com with the subject \"Orientation on July 6/7 - Car Usage\" and the body:\n\n\"Hi Ankit,\n\nI just wanted to let you know that I'll be driving to orientation on July 6th and 7th, so I will be taking the car on those days.\n\nThanks!\"",
+    "timestamp": "2026-07-01 03:31 PM"
+  },
+  {
+    "role": "user",
+    "text": "can you draft an email to vivek jayaraman and angel staneov (find their emails through my gmail or online) writing them about all current updates. ",
+    "timestamp": "2026-07-01 03:32 PM"
+  },
+  {
+    "role": "model",
+    "text": "I found their email addresses:\nVivek Jayaraman: vivek@janelia.hhmi.org\nAngel Staneov: stanoeva@janelia.hhmi.org\n\nBefore I draft the email, could you please tell me what \"all current updates\" refers to? What specific information would you like to include in the email?",
+    "timestamp": "2026-07-01 03:32 PM"
+  },
+  {
+    "role": "user",
+    "text": "tell them im going to uva this fall for computer science where i might minor in bio and the reason for it is because of my jnaelia project on trackign fruit flies to understand their neural circuits in terms of navigation. also tell them i am planning on going to switzerland this summer once my brother comes back from his work in sf. also finally also tell them that i got research under yanjun qi, a deep learning professor at uva. end it off by asking them about any updates and changes to janelia or smth",
+    "timestamp": "2026-07-01 03:33 PM"
+  },
+  {
+    "role": "model",
+    "text": "I've drafted an email to Vivek Jayaraman (vivek@janelia.hhmi.org) and Angel Staneov (stanoeva@janelia.hhmi.org) with the subject \"Updates from Aditya\".\n\nThe email body is:\n\"Dear Vivek and Angel,\n\nI hope this email finds you well. I wanted to share some updates with you.\n\nI'm excited to let you know that I'll be attending UVA this fall, studying Computer Science with a potential minor in Biology. My experience at Janelia, particularly my project on tracking fruit flies to understand their neural circuits in terms of navigation, really inspired me to pursue this path.\n\nThis summer, I'm planning a trip to Switzerland once my brother returns from his work in San Francisco.\n\nAdditionally, I've secured a research position under Yanjun Qi, a deep learning professor at UVA, which I'm very much looking forward to.\n\nI'd love to hear about any updates or changes at Janelia, or anything new with you both.\n\nBest regards,\nAditya\"",
+    "timestamp": "2026-07-01 03:33 PM"
+  },
+  {
+    "role": "user",
+    "text": "whats the subject - make it \"Summer Updates\"",
+    "timestamp": "2026-07-01 03:34 PM"
+  },
+  {
+    "role": "model",
+    "text": "I've updated the subject of the email to \"Summer Updates\" and drafted it again to Vivek Jayaraman and Angel Staneov.\n\nThe email body remains the same:\n\"Dear Vivek and Angel,\n\nI hope this email finds you well. I wanted to share some updates with you.\n\nI'm excited to let you know that I'll be attending UVA this fall, studying Computer Science with a potential minor in Biology. My experience at Janelia, particularly my project on tracking fruit flies to understand their neural circuits in terms of navigation, really inspired me to pursue this path.\n\nThis summer, I'm planning a trip to Switzerland once my brother returns from his work in San Francisco.\n\nAdditionally, I've secured a research position under Yanjun Qi, a deep learning professor at UVA, which I'm very much looking forward to.\n\nI'd love to hear about any updates or changes at Janelia, or anything new with you both.\n\nBest regards,\nAditya\"",
+    "timestamp": "2026-07-01 03:34 PM"
+  },
+  {
+    "role": "user",
+    "text": "ok thanks",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "model",
+    "text": "You're welcome! Is there anything else I can assist you with today?",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "user",
+    "text": "what was the drafted email to vivek and angel",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "model",
+    "text": "The drafted email to Vivek Jayaraman and Angel Staneov has the subject \"Summer Updates\" and the following body:\n\n\"Dear Vivek and Angel,\n\nI hope this email finds you well. I wanted to share some updates with you.\n\nI'm excited to let you know that I'll be attending UVA this fall, studying Computer Science with a potential minor in Biology. My experience at Janelia, particularly my project on tracking fruit flies to understand their neural circuits in terms of navigation, really inspired me to pursue this path.\n\nThis summer, I'm planning a trip to Switzerland once my brother returns from his work in San Francisco.\n\nAdditionally, I've secured a research position under Yanjun Qi, a deep learning professor at UVA, which I'm very much looking forward to.\n\nI'd love to hear about any updates or changes at Janelia, or anything new with you both.\n\nBest regards,\nAditya\"",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "user",
+    "text": "were there any events i recently added to my calendar",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "model",
+    "text": "Yes, you recently added \"Playing tennis with Nikhil, Justin, and Hrishi\" to your calendar for today, July 1st, from 5:30 PM to 7:30 PM.",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "user",
+    "text": "thanks",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "model",
+    "text": "You're welcome! Is there anything else I can help you with?",
+    "timestamp": "2026-07-01 03:35 PM"
+  },
+  {
+    "role": "user",
+    "text": "quitquit",
+    "timestamp": "2026-07-01 03:36 PM"
+  },
+  {
+    "role": "model",
+    "text": "Goodbye!",
+    "timestamp": "2026-07-01 03:36 PM"
+  }
+]

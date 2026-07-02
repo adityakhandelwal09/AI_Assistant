@@ -7,26 +7,34 @@ from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
 from tools.imessage_tools import search_messages, get_conversation
 from tools.google_drive_tools import search_drive, get_file_content
+from memory.conversation_memory import load_history, history_to_content, add_to_history
 from dotenv import load_dotenv
 
 load_dotenv()
 
-#results = search_messages("dance practice")
+# load previous history on startup
+history = load_history()
+content = history_to_content(history)
 
-#results = get_conversation("+15712686203")
-#for m in results:
-#    print(m["date"], "-", m["sender"], ":", m["text"])
+if history:
+    print(f"Welcome back! Loaded {len(history)} previous messages.")
+else:
+    print("Starting fresh conversation.")
 
-print("Welcome to the Gemini Agent!")
-content = []
 while True:
-  user_input = input("Ask Away: ")
-  if user_input == "quit":
-    break
-  response_text, content = run_agent(user_input, content)
-  print(response_text)
-  print()
-
+    user_input = input("Ask Away: ")
+    if user_input.lower() == "quit":
+        break
+    
+    # add user message to history
+    history = add_to_history(history, "user", user_input)
+    
+    response_text, content = run_agent(user_input, content)
+    print()
+    print(f"ARIA: {response_text}")
+    
+    # add ARIA's response to history
+    history = add_to_history(history, "model", response_text)
 
 '''
 for item in content:
