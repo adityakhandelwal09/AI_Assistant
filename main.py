@@ -8,10 +8,50 @@ from agents.agent import run_agent
 from tools.imessage_tools import search_messages, get_conversation
 from tools.google_drive_tools import search_drive, get_file_content
 from memory.conversation_memory import load_history, history_to_content, add_to_history
-from dotenv import load_dotenv
+from memory.vector_store import add_chunks, search, generate_query_variations, multi_query_search, clear_collection
+from dotenv import load_dotenv 
 
 load_dotenv()
 
+clear_collection("messages")
+
+tricky_chunks = [
+    {"text": "Aditya used to love spicy Indian curries but after getting food poisoning last year, he can't stand spicy food anymore", "metadata": {"id": "1", "source": "test"}},
+    {"text": "Aditya's favorite restaurant growing up was a spicy Thai place downtown that he visited every weekend", "metadata": {"id": "2", "source": "test"}},
+    {"text": "When people ask Aditya about spicy food, he always says his tolerance used to be really high back in middle school", "metadata": {"id": "3", "source": "test"}},
+    {"text": "Aditya specifically requested mild seasoning when ordering butter chicken last week, saying his stomach can't handle heat anymore", "metadata": {"id": "4", "source": "test"}},
+    {"text": "Aarav loves extremely spicy food and once did a ghost pepper challenge with his friends", "metadata": {"id": "5", "source": "test"}},
+    {"text": "Aditya's mom makes a mild version of biryani because the whole family prefers less heat in their meals now", "metadata": {"id": "6", "source": "test"}},
+]
+print()
+add_chunks(tricky_chunks, "messages")
+print("PLAIN SEARCH (no multi-query, no rerank):")
+results = multi_query_search("Should I order Aditya something spicy?", "messages", n_results_per_query=6)
+for r in results:
+    print(r["text"], "-", r["distance"])
+
+#print(generate_query_variations("Should I order Aditya something spicy?"))
+
+'''
+print("=" * 60)
+print("TRICKY QUERY: Should I order Aditya something spicy?")
+print("=" * 60)
+results = multi_query_search("Should I order Aditya something spicy?", "messages", n_results_per_query=6)
+for r in results:
+    print(r)
+    print()
+'''
+
+'''
+print("=" * 60)
+print("TRICKY QUERY: Should I order Aditya something spicy?")
+print("=" * 60)
+results = search("Should I order Aditya something spicy?", "messages", n_results=6)
+for r in results:
+    print(r)
+    print()
+'''
+'''
 # load previous history on startup
 history = load_history()
 content = history_to_content(history)
@@ -35,7 +75,8 @@ while True:
     
     # add ARIA's response to history
     history = add_to_history(history, "model", response_text)
-
+'''
+    
 '''
 for item in content:
   print(item)
