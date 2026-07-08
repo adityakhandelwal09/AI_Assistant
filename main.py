@@ -1,7 +1,10 @@
+from email import message_from_string
+
 from google import genai
 import datetime as datetime
 from datetime import date, timedelta
 import os
+from config.auth import get_google_service
 from tools.calendar_tools import get_events, create_event, delete_event, edit_event
 from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
@@ -10,9 +13,36 @@ from tools.google_drive_tools import search_drive, get_file_content
 from memory.conversation_memory import load_history, history_to_content, add_to_history
 from memory.vector_store import add_chunks, search, generate_query_variations, multi_query_search, clear_collection
 from dotenv import load_dotenv 
-
 load_dotenv()
 
+def get_full_headers(message_id):
+    """Fetch all headers for a message, not just the basic ones"""
+    service = get_google_service("gmail", "v1")
+    msg = service.users().messages().get(userId="me", id=message_id, format="metadata").execute()
+    headers = msg.get("payload", {}).get("headers", [])
+    return {h["name"] for h in headers}
+
+
+def is_promotional(headers):
+    """
+    Determines if an email is a newsletter, promotion, or marketing email
+    based on header signals.
+    """
+    # Signal 1: List-Unsubscribe header - the strongest signal
+    if "List-Unsubscribe" in headers:
+        return True
+    
+emails = search_emails(query="", max_results=10)
+
+for email in emails:
+    headers = get_full_headers(email["id"])
+    promotional = is_promotional(headers)
+    print(f"{email['subject']} — Promotional: {promotional}")
+
+  
+
+
+'''
 clear_collection("messages")
 
 tricky_chunks = [
@@ -31,7 +61,7 @@ for r in results:
     print(r["text"], "-", r["distance"])
 
 #print(generate_query_variations("Should I order Aditya something spicy?"))
-
+'''
 '''
 print("=" * 60)
 print("TRICKY QUERY: Should I order Aditya something spicy?")
