@@ -1,113 +1,86 @@
-from numpy.ma import count
-from tools.gmail_tools import search_emails, get_email_content
+import base64
 import re
-from email import message_from_string
-from langchain_text_splitters import SemanticChunker
-# Replace with your actual embeddings provider (e.g., OpenAIEmbeddings, HuggingFaceEmbeddings)
-from langchain_core.embeddings import FakeEmbeddings 
+from tools.gmail_tools import search_emails, get_email_content, get_google_service, get_body_from_parts
+
+service = get_google_service("gmail", "v1")
+
+def get_full_headers(message_id):
+    #fetch all headers for a message, not just the basic ones
+    msg = service.users().messages().get(userId="me", id=message_id, format="metadata").execute()
+    headers = msg.get("payload", {}).get("headers", [])
+    return {h["name"] for h in headers}
 
 
+def is_promotional(headers):
+    #figure out if an email is a newsletter, promotion, or marketing email based on header signals
 
-'''
-def process_email_pipeline(raw_email_string, email_meta_source):
+    # Signal 1: List-Unsubscribe header - the strongest signal
+    if "List-Unsubscribe" in headers or "List-Unsubscribe-Post" in headers:
+        return True
+    
+    # Signal 2: Common bulk-mail headers
+    if headers.get("Precedence", "").lower() in ["bulk", "junk", "list"]:
+        return True
+    
+    # Signal 3: Common no-reply patterns in sender
+    sender = headers.get("From", "").lower()
+    no_reply_patterns = ["noreply", "no-reply", "donotreply", "newsletter", "marketing", "notifications@"]
+    if any(pattern in sender for pattern in no_reply_patterns):
+        return True
+    
+    return False
+
+def strip_signature_and_disclaimers(email_text):
     """
-    Parses, cleans, summarizes, and chunks a raw email string into 
-    highly contextualized, RAG-ready vector database payloads.
+    Removes common email signatures, disclaimers, and footer boilerplate.
     """
-    msg = message_from_string(raw_email_string)
+    # Common signature delimiters
+    signature_markers = [
+        r"--\s*\n",  # standard email signature delimiter "-- "
+        r"Sent from my iPhone",
+        r"Sent from my Android",
+        r"Get Outlook for",
+        r"This email and any attachments",
+        r"CONFIDENTIALITY NOTICE",
+        r"This message contains confidential",
+    ]
     
-    # 1. PRE-FILTERING: Drop marketing/advertisements immediately
-    if "List-Unsubscribe" in msg:
-        print(f"Skipping email ID {email_meta_source['id']}: Detected as advertisement/newsletter.")
-        return []
-
-    # 2. HEADER ISOLATION: Build clean metadata dictionary
-    metadata = {
-        "id": email_meta_source["id"],
-        "thread_id": email_meta_source["thread_id"],
-        "source": "gmail",
-        "date": msg.get("Date", email_meta_source.get("date")),
-        "sender": msg.get("From", email_meta_source.get("sender")),
-        "subject": msg.get("Subject", email_meta_source.get("subject"))
-    }
-
-    # 3. EXTRACTION: Pull plain text body
-    body = ""
-    if msg.is_multipart():
-        for part in msg.walk():
-            if part.get_content_type() == "text/plain":
-                body = part.get_payload(decode=True).decode(errors="ignore")
-                break
-    else:
-        body = msg.get_payload(decode=True).decode(errors="ignore")
-
-    # 4. PARSING & CLEANING: Split threads and remove signatures/disclaimers
-    # Regex split on common reply anchors
-    thread_delimiters = r"(From:|^On.*wrote:|^---.*Original Message---)"
-    raw_turns = re.split(thread_delimiters, body, flags=re.MULTILINE)
+    text = email_text
+    for marker in signature_markers:
+        match = re.search(marker, text, re.IGNORECASE)
+        if match:
+            text = text[:match.start()]  # cut off everything from the marker onward
     
-    cleaned_body_text = ""
-    for turn in raw_turns:
-        if not turn.strip():
-            continue
-        # Truncate text before signatures or legal boilerplate footers
-        clean_turn = re.split(r"(^Best regards|^Thanks|^Sincerely|--\s*\n|This electronic message contains information)", turn, flags=re.IGNORECASE | re.MULTILINE)[0]
-        cleaned_body_text += clean_turn + "\n"
+    return text.strip()
 
-    if not cleaned_body_text.strip():
-        return []
-
-    # 5. CONTEXTUAL RETRIEVAL: Mock an LLM call to get a high-level summary of the overall thread
-    # Replace this mock string with an actual LLM invocation (e.g., openai.chat.completions)
-    thread_summary = f"Discussion regarding {metadata['subject']} between {metadata['sender']}"
-
-    # 6. SEMANTIC CHUNKING: Split the cleaned body based on thematic shifts
-    # Using FakeEmbeddings for syntax; swap with OpenAIEmbeddings(model="text-embedding-3-small") in production
-    embeddings = FakeEmbeddings(size=1536) 
-    text_splitter = SemanticChunker(embeddings, breakpoint_threshold_type="percentile")
+def get_thread_messages(thread_id):
+    #gets all individual messages in a thread as separate turns, each with their own sender, date, and content.
+    thread = service.users().threads().get(userId="me", id=thread_id, format="full").execute()
     
-    # Generate chunks (ideally targets 150-250 tokens per semantic concept)
-    semantic_slices = text_splitter.split_text(cleaned_body_text)
-
-    # 7. CONTEXT INJECTION: Combine summary, metadata, and chunk slices
-    final_rag_chunks = []
-    for slice_text in semantic_slices:
-        chunk_text = (
-            f"Email Thread Summary: {thread_summary} | "
-            f"From: {metadata['sender']} | "
-            f"Date: {metadata['date']} | "
-            f"Subject: {metadata['subject']} | "
-            f"Content: {slice_text.strip()}"
-        )
+    turns = []
+    for message in thread.get("messages", []):
+        headers = {h["name"]: h["value"] for h in message.get("payload", {}).get("headers", [])}
         
-        final_rag_chunks.append({
-            "text": chunk_text,
-            "metadata": metadata
+        # extract body content (reuse your existing body extraction logic)
+        parts = message.get("payload", {}).get("parts", [])
+        body = get_body_from_parts(parts) if parts else message.get("payload", {}).get("body", {}).get("data")
+
+
+        if body:
+            content = base64.urlsafe_b64decode(body).decode("utf-8")
+            match = re.search(r"On.+?wrote:", content, re.DOTALL)
+            if match:
+                content = content[:match.start()]
+            content = strip_signature_and_disclaimers(content)
+        else:
+            content = ""
+        
+        turns.append({
+            "sender": headers.get("From", "Unknown"),
+            "date": headers.get("Date", ""),
+            "subject": headers.get("Subject", ""),
+            "content": content,
+            "message_id": message.get("id")
         })
-
-    return final_rag_chunks
-
-# ==========================================
-# Example Usage:
-# ==========================================
-if __name__ == "__main__":
-    raw_email_mock = """From: john@company.com
-Subject: Q3 Budget Deliverables
-Date: Mon, 6 Jul 2026 10:00:00
-
-Hi Team,
-We need to finalize the Q3 budget spreadsheet by Friday. Please look over the department costs.
-
-Best regards,
-John Doe
--- 
-Corporate Signatures Confidentiality Notice..."""
-
-    meta_input = {"id": "msg_12345", "thread_id": "thread_abcde"}
     
-    chunks = process_email_pipeline(raw_email_mock, meta_input)
-    for index, chunk in enumerate(chunks):
-        print(f"\n--- CHUNK {index+1} ---")
-        print("TEXT:", chunk["text"])
-        print("METADATA:", chunk["metadata"])
-'''
+    return turns

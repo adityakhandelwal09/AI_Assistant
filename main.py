@@ -1,10 +1,10 @@
 from email import message_from_string
-
 from google import genai
 import datetime as datetime
 from datetime import date, timedelta
 import os
 from config.auth import get_google_service
+from memory.rag_ingestion.gmail_ingestion import get_thread_messages
 from tools.calendar_tools import get_events, create_event, delete_event, edit_event
 from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
@@ -14,6 +14,19 @@ from memory.conversation_memory import load_history, history_to_content, add_to_
 from memory.vector_store import add_chunks, search, generate_query_variations, multi_query_search, clear_collection
 from dotenv import load_dotenv 
 load_dotenv()
+
+
+emails = search_emails(query="", max_results=1)
+turns = get_thread_messages(emails[0]["thread_id"])
+
+for turn in turns:
+    print(turn["sender"], "-", turn["date"])
+    print(turn["content"])
+    print("---")
+print()
+
+
+'''
 
 def get_full_headers(message_id):
     """Fetch all headers for a message, not just the basic ones"""
@@ -39,7 +52,7 @@ for email in emails:
     promotional = is_promotional(headers)
     print(f"{email['subject']} — Promotional: {promotional}")
 
-  
+'''
 
 
 '''
