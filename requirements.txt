@@ -40,9 +40,15 @@ idna==3.18
 importlib_resources==7.1.0
 Jinja2==3.1.6
 joblib==1.5.3
+jsonpatch==1.33
+jsonpointer==3.1.1
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 kubernetes==36.0.2
+langchain-core==1.4.9
+langchain-protocol==0.0.18
+langchain-text-splitters==1.1.2
+langsmith==0.10.0
 markdown-it-py==4.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
@@ -85,6 +91,7 @@ referencing==0.37.0
 regex==2026.6.28
 requests==2.34.2
 requests-oauthlib==2.0.0
+requests-toolbelt==1.0.0
 rich==15.0.0
 rpds-py==2026.6.3
 safetensors==0.8.0
@@ -107,9 +114,12 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.7.0
+uuid_utils==0.17.0
 uvicorn==0.50.0
 uvloop==0.22.1
 watchfiles==1.2.0
 websocket-client==1.9.0
 websockets==16.0
+xxhash==3.8.1
 yarl==1.24.2
+zstandard==0.25.0

@@ -9,9 +9,12 @@ CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
 genai_client = genai.Client()
 
-messages_collection = chroma_client.get_or_create_collection(name="messages")
-documents_collection = chroma_client.get_or_create_collection(name="documents")
-
+collections = {
+    "gmail": chroma_client.get_or_create_collection(name="gmail"),
+    "imessage": chroma_client.get_or_create_collection(name="imessage"),
+    "drive": chroma_client.get_or_create_collection(name="drive"),
+    "calendar": chroma_client.get_or_create_collection(name="calendar"),
+}
 
 def multi_query_search(original_query, collection_name, n_results_per_query=10):
     # Step 1: Generate 5 rephrased versions of the query using Gemini
@@ -84,27 +87,25 @@ def embed_text(text):
     )
     return result.embeddings[0].values
 
-
 def add_chunks(chunks, collection_name):
-    #add a list of chunks to the vecotor store. Each chunk should be a dict with 'text' and 'metadata' keys.
-
-    collection = messages_collection if collection_name == "messages" else documents_collection
+    #adds a list of chunks to the specified collection in the vector store
+    collection = collections[collection_name]
     
     for i, chunk in enumerate(chunks):
-        embedding = embed_text(chunk["text"])
+        embedding = embed_text(chunk["embedding_text"])  # embed the clean version
         chunk_id = f"{collection_name}_{chunk['metadata'].get('id', i)}_{i}"
         
         collection.add(
             ids=[chunk_id],
             embeddings=[embedding],
-            documents=[chunk["text"]],
+            documents=[chunk["display_text"]],  # store the contextualized version
             metadatas=[chunk["metadata"]]
         )
 
 
 def search(query, collection_name="messages", n_results=10):
     #searches the vector store for chunks similar to the query
-    collection = messages_collection if collection_name == "messages" else documents_collection
+    collection = collections[collection_name]
     
     query_embedding = embed_text(query)
     

@@ -12,10 +12,22 @@ from tools.imessage_tools import search_messages, get_conversation
 from tools.google_drive_tools import search_drive, get_file_content
 from memory.conversation_memory import load_history, history_to_content, add_to_history
 from memory.vector_store import add_chunks, search, generate_query_variations, multi_query_search, clear_collection
+from memory.rag_ingestion.gmail_ingestion import ingest_all_emails, get_full_headers, is_promotional
 from dotenv import load_dotenv 
 load_dotenv()
 
+#print(headers[0])
 
+
+ingest_all_emails(max_emails=50)
+
+'''
+emails = search_emails(query="", max_results=4)
+for email in emails:
+    print(email["subject"], "-", email["date"], "-", email["thread_id"])
+'''
+
+'''
 emails = search_emails(query="", max_results=1)
 turns = get_thread_messages(emails[0]["thread_id"])
 
@@ -24,7 +36,7 @@ for turn in turns:
     print(turn["content"])
     print("---")
 print()
-
+'''
 
 '''
 

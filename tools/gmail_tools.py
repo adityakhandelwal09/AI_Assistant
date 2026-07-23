@@ -67,3 +67,4 @@ def draft_email(to, subject, body):
         "message_id": draft_response.get("message", {}).get("id"),
         "status": "Draft created successfully"
     }
+
