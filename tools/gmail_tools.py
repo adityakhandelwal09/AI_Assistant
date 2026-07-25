@@ -1,5 +1,6 @@
 import base64
 from config.auth import get_google_service
+
 service = get_google_service("gmail", "v1")
 
 def search_emails(query, max_results=5):
@@ -30,26 +31,45 @@ def search_emails(query, max_results=5):
         
     return email_list
 
-#helper function to recursively search through the parts of an email payload to find the text/plain body content
 def get_body_from_parts(parts):
+    """======================================================================
+    Recursively searches email parts for content. Prefers text/plain,
+    falls back to text/html (converted to clean text) if no plain text exists.
+    ======================================================================"""
+    html_fallback = None
+    
     for part in parts:
-        if part.get("mimeType") == "text/plain":
-            return part.get("body", {}).get("data")
-        elif "multipart" in part.get("mimeType"):
-            subparts = part.get("parts", [])
-            body = get_body_from_parts(subparts)
-            if body:
-                return body
-    return None
+        mime_type = part.get("mimeType", "")        
+        
+        if mime_type == "text/plain":
+            return part.get("body", {}).get("data"), "plain"
+        
+        elif mime_type == "text/html" and html_fallback is None:
+            html_fallback = part.get("body", {}).get("data")
+        
+        elif "multipart" in mime_type:
+            result, result_type = get_body_from_parts(part.get("parts", []))
+            if result_type == "plain":
+                return result, "plain"
+            elif result and html_fallback is None:
+                html_fallback = result
+    
+    return html_fallback, "html"
 
 #given a message ID, retrieves the full email content (including body) and decodes it from base64
 def get_email_content(message_id):
+    content = ""
     msg = service.users().messages().get(userId="me", id=message_id, format="full").execute()
     parts = msg.get("payload", {}).get("parts", [])
-    email_body = get_body_from_parts(parts)
+    email_body, body_type = get_body_from_parts(parts)
+    content = base64.urlsafe_b64decode(email_body).decode("utf-8")
+    if body_type == "html":
+        content = html_to_clean_text(content)
+
     if email_body is None:
         email_body = msg.get("payload", {}).get("body", {}).get("data")
-    return base64.urlsafe_b64decode(email_body).decode('utf-8')
+        content = base64.urlsafe_b64decode(email_body).decode("utf-8")
+    return content
 
 def draft_email(to, subject, body):
     message = f"To: {to}\nSubject: {subject}\n\n{body}"

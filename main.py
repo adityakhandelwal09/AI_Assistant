@@ -12,14 +12,31 @@ from tools.imessage_tools import search_messages, get_conversation
 from tools.google_drive_tools import search_drive, get_file_content
 from memory.conversation_memory import load_history, history_to_content, add_to_history
 from memory.vector_store import add_chunks, search, generate_query_variations, multi_query_search, clear_collection
-from memory.rag_ingestion.gmail_ingestion import ingest_all_emails, get_full_headers, is_promotional
+from memory.rag_ingestion.gmail_ingestion import ingest_all_emails, create_chunk
 from dotenv import load_dotenv 
 load_dotenv()
 
 #print(headers[0])
 
+#thread_id = "19f90c25e84d3998"
+#create_chunk(thread_id)
 
-ingest_all_emails(max_emails=50)
+email = search_emails(query="Don’t get locked out of your account", max_results=1)
+print(email)
+print()
+thread_id = email[0].get("thread_id")
+create_chunk(thread_id)
+
+
+'''
+clear_collection("gmail")
+ingest_all_emails(max_emails=20)
+
+results = multi_query_search("what school wished aditya happy birthday", "gmail", n_results_per_query=3)
+for r in results:
+    print(r["text"])
+    print("---")
+'''
 
 '''
 emails = search_emails(query="", max_results=4)

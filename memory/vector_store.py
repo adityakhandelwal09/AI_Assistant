@@ -1,5 +1,6 @@
 import chromadb
 import os
+import re
 from google import genai
 from sentence_transformers import CrossEncoder
 
@@ -19,6 +20,8 @@ collections = {
 def multi_query_search(original_query, collection_name, n_results_per_query=10):
     # Step 1: Generate 5 rephrased versions of the query using Gemini
     rephrased_queries = generate_query_variations(original_query)
+    print("Rephrased queries:", rephrased_queries)
+    print()
     
     # Step 2: Run search() for EACH variation
     all_results = []
@@ -56,7 +59,6 @@ def remove_duplicates(results):
             unique_results.append(result)
     return unique_results
 
-
 def generate_query_variations(original_query):
     #ses Gemini to generate multiple rephrasings of a query to improve retrieval coverage across different phrasings.
 
@@ -93,13 +95,19 @@ def add_chunks(chunks, collection_name):
     
     for i, chunk in enumerate(chunks):
         embedding = embed_text(chunk["embedding_text"])  # embed the clean version
-        chunk_id = f"{collection_name}_{chunk['metadata'].get('id', i)}_{i}"
+        metadata = chunk["metadata"]
+        chunk_id = (
+            f"{collection_name}_"
+            f"{metadata.get('thread_id', 'thread')}_"
+            f"{metadata.get('message_id', 'message')}_"
+            f"{i}"
+        )
         
         collection.add(
             ids=[chunk_id],
             embeddings=[embedding],
-            documents=[chunk["display_text"]],  # store the contextualized version
-            metadatas=[chunk["metadata"]]
+            documents=[chunk["embedding_text"]],  # store the contextualized version
+            metadatas=[metadata]
         )
 
 
@@ -117,6 +125,7 @@ def search(query, collection_name="messages", n_results=10):
     matches = []
     for i in range(len(results["documents"][0])):
         matches.append({
+            "id": results.get("ids", [[None]])[0][i],
             "text": results["documents"][0][i],
             "metadata": results["metadatas"][0][i],
             "distance": results["distances"][0][i]
@@ -124,13 +133,8 @@ def search(query, collection_name="messages", n_results=10):
     
     return matches
 
-def clear_collection(collection_name="messages"):
-    #delete all data in a collection - useful for testing
-    global messages_collection, documents_collection
-    
-    if collection_name == "messages":
-        chroma_client.delete_collection("messages")
-        messages_collection = chroma_client.get_or_create_collection(name="messages")
-    else:
-        chroma_client.delete_collection("documents")
-        documents_collection = chroma_client.get_or_create_collection(name="documents")
+def clear_collection(collection_name):
+    #delete all data in a collection
+    global collections
+    chroma_client.delete_collection(collection_name)
+    collections[collection_name] = chroma_client.get_or_create_collection(name=collection_name)
