@@ -20,13 +20,20 @@ load_dotenv()
 
 #thread_id = "19f90c25e84d3998"
 #create_chunk(thread_id)
-
-email = search_emails(query="Don’t get locked out of your account", max_results=1)
+text = "for the NEW TJHSST Hall of Honor! Dear TJHSST Community, A huge thank you to everyone who has already stepped up and submitted a nomination for the inaugural Thomas Jefferson High School for Science and Technology (TJHSST) Hall of Honor class of 2026! Our alumni have consistently changed the world, making profound impacts across all facets of life. Whether their incredible accomplishments are in science, technology, engineering, programming, medicine, education, government, entertainment, athletics, or something else, we want to celebrate them. Who makes the ideal candidate? We aren't just looking for the richest or most famous graduates. The ideal Hall of Honor inductee is: · An individual who has lived a true life of honor. · An inspiring role model whom current TJ students can look up to and see as a reflection of their own future potential. How You Can Make an Impact: Help us cement the legacy of our greatest alumni by telling their stories! If you know someone deserving of a place in TJHSST’s Hall of Honor, please fill out our [nomination Google Form](). · Deadline: We are accepting submissions through Wednesday, July 29. · What to Include: Please provide as much supporting information as possible to help your nominee stand out. If you have any questions about the nomination process, please don't hesitate to reach out to our TJ Director of Communications, Mike Roth, at mbroth@fcps.edu"
+client_id = genai.Client()
+response = client_id.models.count_tokens(
+        model="gemini-2.5-flash",
+        contents=text
+    )
+print(response.total_tokens)
+'''
+email = search_emails(query="ONE WEEK LEFT to Nominate for the NEW TJHSST Hall of Honor!", max_results=1)
 print(email)
 print()
 thread_id = email[0].get("thread_id")
 create_chunk(thread_id)
-
+'''
 
 '''
 clear_collection("gmail")
