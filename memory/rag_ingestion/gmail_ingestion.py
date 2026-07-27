@@ -300,7 +300,7 @@ def create_chunk(thread_id):
     return all_chunks
 
 def load_sync_state():
-    """Load the Gmail sync checkpoint from disk."""
+    #Load the most recent Gmail sync checkpoint from disk.
     if not os.path.exists(SYNC_STATE_PATH):
         return {}
 
@@ -311,17 +311,17 @@ def load_sync_state():
         return {}
 
 def save_sync_state(state):
-    """Persist the Gmail sync checkpoint to disk."""
+    #Save the Gmail sync checkpoint to disk.
     with open(SYNC_STATE_PATH, "w", encoding="utf-8") as sync_file:
         json.dump(state, sync_file, indent=2)
 
 def get_current_history_id():
-    """Fetch the current Gmail historyId for checkpointing."""
+    #Fetch the current Gmail historyId so only retrieve new emails after that point
     profile = service.users().getProfile(userId="me").execute()
     return profile.get("historyId")
 
 def collect_primary_thread_ids(max_threads=None, page_size=500):
-    """Collect unique thread IDs from the primary inbox with pagination."""
+    #Collect unique thread IDs from the primary inbox with pagination.
     thread_ids = []
     seen_thread_ids = set()
     page_token = None
@@ -351,8 +351,8 @@ def collect_primary_thread_ids(max_threads=None, page_size=500):
 
     return thread_ids
 
-def _ingest_thread_ids(thread_ids):
-    """Ingest a list of Gmail thread IDs into the vector store."""
+def ingest_thread_id(thread_ids):
+    #Ingest a list of Gmail thread IDs into the vector store.
     processed_thread_ids = set()
     total_chunks_added = 0
 
@@ -377,7 +377,7 @@ def _ingest_thread_ids(thread_ids):
     return total_chunks_added
 
 def collect_new_primary_thread_ids(start_history_id):
-    """Collect primary inbox thread IDs that changed since the last sync checkpoint."""
+    #Collect primary inbox thread IDs that changed since the last sync checkpoint.
     thread_ids = []
     seen_thread_ids = set()
     page_token = None
@@ -396,10 +396,6 @@ def collect_new_primary_thread_ids(start_history_id):
         for history in response.get("history", []):
             for message_added in history.get("messagesAdded", []):
                 message = message_added.get("message", {})
-                label_ids = set(message.get("labelIds", []))
-
-                if "CATEGORY_PERSONAL" not in label_ids:
-                    continue
 
                 thread_id = message.get("threadId")
                 if not thread_id or thread_id in seen_thread_ids:
@@ -415,9 +411,9 @@ def collect_new_primary_thread_ids(start_history_id):
     return thread_ids, latest_history_id
 
 def ingest_all_primary_emails(max_threads=None):
-    """Backfill the entire primary inbox, paging through every thread."""
+    #Ingests the entire primary inbox into the vector store, paging through every thread.
     thread_ids = collect_primary_thread_ids(max_threads=max_threads)
-    total_chunks_added = _ingest_thread_ids(thread_ids)
+    total_chunks_added = ingest_thread_id(thread_ids)
 
     current_history_id = get_current_history_id()
     if current_history_id:
@@ -426,7 +422,7 @@ def ingest_all_primary_emails(max_threads=None):
     return total_chunks_added
 
 def ingest_new_primary_emails():
-    """Incrementally ingest new primary inbox mail since the last saved checkpoint."""
+    #Incrementally ingest new primary inbox mail since the last saved checkpoint.
     state = load_sync_state()
     start_history_id = state.get("history_id")
 
@@ -447,13 +443,9 @@ def ingest_new_primary_emails():
         print("No new primary inbox emails found.")
         return 0
 
-    total_chunks_added = _ingest_thread_ids(thread_ids)
+    total_chunks_added = ingest_thread_id(thread_ids)
     checkpoint_history_id = latest_history_id or get_current_history_id()
     if checkpoint_history_id:
         save_sync_state({"history_id": checkpoint_history_id})
 
     return total_chunks_added
-
-def ingest_all_emails(max_emails=50):
-    """Backward-compatible wrapper for primary-inbox backfill."""
-    return ingest_all_primary_emails(max_threads=max_emails)

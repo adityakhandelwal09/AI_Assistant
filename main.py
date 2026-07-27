@@ -16,10 +16,48 @@ from memory.rag_ingestion.gmail_ingestion import ingest_all_emails, create_chunk
 from dotenv import load_dotenv 
 load_dotenv()
 
+def check_labels_for_recent_emails(count=50):
+    service = get_google_service("gmail", "v1")
+    
+    emails = search_emails(query="", max_results=count)
+    
+    for email in emails:
+        msg = service.users().messages().get(
+            userId="me", 
+            id=email["id"], 
+            format="minimal"
+        ).execute()
+        
+        label_ids = msg.get("labelIds", [])
+        
+        print(f"Subject: {email['subject']}")
+        print(f"Thread ID: {email['thread_id']}")
+        print(f"Labels: {label_ids}")
+        print("---")
+
+check_labels_for_recent_emails(50)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #print(headers[0])
 
 #thread_id = "19f90c25e84d3998"
 #create_chunk(thread_id)
+'''
 text = "for the NEW TJHSST Hall of Honor! Dear TJHSST Community, A huge thank you to everyone who has already stepped up and submitted a nomination for the inaugural Thomas Jefferson High School for Science and Technology (TJHSST) Hall of Honor class of 2026! Our alumni have consistently changed the world, making profound impacts across all facets of life. Whether their incredible accomplishments are in science, technology, engineering, programming, medicine, education, government, entertainment, athletics, or something else, we want to celebrate them. Who makes the ideal candidate? We aren't just looking for the richest or most famous graduates. The ideal Hall of Honor inductee is: · An individual who has lived a true life of honor. · An inspiring role model whom current TJ students can look up to and see as a reflection of their own future potential. How You Can Make an Impact: Help us cement the legacy of our greatest alumni by telling their stories! If you know someone deserving of a place in TJHSST’s Hall of Honor, please fill out our [nomination Google Form](). · Deadline: We are accepting submissions through Wednesday, July 29. · What to Include: Please provide as much supporting information as possible to help your nominee stand out. If you have any questions about the nomination process, please don't hesitate to reach out to our TJ Director of Communications, Mike Roth, at mbroth@fcps.edu"
 client_id = genai.Client()
 response = client_id.models.count_tokens(
@@ -27,6 +65,7 @@ response = client_id.models.count_tokens(
         contents=text
     )
 print(response.total_tokens)
+'''
 '''
 email = search_emails(query="ONE WEEK LEFT to Nominate for the NEW TJHSST Hall of Honor!", max_results=1)
 print(email)
