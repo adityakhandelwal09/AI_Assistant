@@ -12,10 +12,44 @@ from tools.imessage_tools import search_messages, get_conversation
 from tools.google_drive_tools import search_drive, get_file_content
 from memory.conversation_memory import load_history, history_to_content, add_to_history
 from memory.vector_store import add_chunks, search, generate_query_variations, multi_query_search, clear_collection
-from memory.rag_ingestion.gmail_ingestion import ingest_all_emails, create_chunk
+from memory.rag_ingestion.gmail_ingestion import ingest_all_primary_emails, create_chunk
 from dotenv import load_dotenv 
 load_dotenv()
 
+
+
+queries = [
+    "nova transcript for dual enrollment",
+    "did i get any free AI credits?"
+]
+
+for q in queries:
+    print(f"QUERY: {q}")
+    print("=" * 50)
+    results = multi_query_search(q, "gmail")
+    for r in results[:5]:
+        print(r["text"][:200])
+        print("---")
+    print("\n")
+
+
+'''
+clear_collection("gmail")
+ingest_all_primary_emails(max_threads=300)
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 def check_labels_for_recent_emails(count=50):
     service = get_google_service("gmail", "v1")
     
@@ -36,22 +70,7 @@ def check_labels_for_recent_emails(count=50):
         print("---")
 
 check_labels_for_recent_emails(50)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+'''
 
 #print(headers[0])
 

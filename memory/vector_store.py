@@ -32,30 +32,15 @@ def multi_query_search(original_query, collection_name, n_results_per_query=10):
     # Step 3: Deduplicate (same chunk might match multiple query variations)
     unique_results = remove_duplicates(all_results)
 
-    # Step 4: Rerank down to the best ones
-    final_results = rerank(original_query, unique_results)
-    
-    return final_results
-
-def rerank(original_query, matches, top_n=5):
-    if len(matches) <= top_n:
-        return matches
-    
-    filter_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
-    
-    pairs = [[original_query, match["text"]] for match in matches]
-    scores = filter_encoder.predict(pairs)
-    
-    ranked = sorted(zip(matches, scores), key=lambda x: x[1], reverse=True)
-    return [match for match, score in ranked[:top_n]]
+    return unique_results
 
 def remove_duplicates(results):
-    seen_texts = set()
+    seen_chunk_id = set()
     unique_results = []
 
     for result in results:
-        if result["text"] not in seen_texts:
-            seen_texts.add(result["text"])
+        if result["chunk_id"] not in seen_chunk_id:
+            seen_chunk_id.add(result["chunk_id"])
             unique_results.append(result)
     return unique_results
 
@@ -125,7 +110,7 @@ def search(query, collection_name="messages", n_results=10):
     matches = []
     for i in range(len(results["documents"][0])):
         matches.append({
-            "id": results.get("ids", [[None]])[0][i],
+            "chunk_id": results.get("ids", [[None]])[0][i],
             "text": results["documents"][0][i],
             "metadata": results["metadatas"][0][i],
             "distance": results["distances"][0][i]

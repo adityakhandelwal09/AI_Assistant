@@ -282,8 +282,6 @@ def create_chunk(thread_id):
             text_for_llm = add_context_to_chunk(
                 chunk, thread_summary, turn["sender"], turn["date"], turn["subject"]
             )
-            print(chunk)
-            print("-" * 50)
             
             all_chunks.append({
                 "embedding_text": text_for_llm,  # include subject/context so retrieval can match on it
