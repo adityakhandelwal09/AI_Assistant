@@ -13,11 +13,86 @@ from tools.google_drive_tools import search_drive, get_file_content
 from memory.conversation_memory import load_history, history_to_content, add_to_history
 from memory.vector_store import add_chunks, search, generate_query_variations, multi_query_search, clear_collection
 from memory.rag_ingestion.gmail_ingestion import ingest_all_primary_emails, create_chunk
+from memory.rag_ingestion.imessage_ingestion import ingest_all_imessages, load_contact_names, list_imessage_chats, get_chat_messages, create_chunks_from_messages
 from dotenv import load_dotenv 
 load_dotenv()
+'''
+contact_names = load_contact_names()
+chats = list_imessage_chats(contact_names)
+for chat in chats:
+    if "viola" in chat["conversation_label"].lower():
+        print(chat["chat_id"], chat["conversation_label"], chat["participants"])
+'''
+
+print()
+
+queries = [
+    "what did I ask aashna to play",
+    "where is nicole staying for beach week"
+]
+
+for q in queries:
+    print(f"QUERY: {q}")
+    print("=" * 50)
+    results = multi_query_search(q, "imessage")
+    for result in results:
+        print(result["text"])
+        print(result["metadata"]["conversation_label"])
+        print("---")
 
 
 
+'''
+clear_collection("imessage")
+contact_names = load_contact_names()
+chats = list_imessage_chats(contact_names)
+
+for index, chat in enumerate(chats[:10], start=1):
+    chat_type = "group" if len(chat["participants"]) > 1 else "individual"
+    print(f"{index}. [{chat_type}] {chat['conversation_label']}")
+
+ingest_all_imessages(max_chats=10, max_messages_per_chat=200)
+'''
+
+
+'''
+contact_names = load_contact_names()
+chats = list_imessage_chats(contact_names)
+
+individual_chat = next(chat for chat in chats if len(chat["participants"]) == 1)
+group_chat = next(chat for chat in chats if len(chat["participants"]) > 1)
+
+for chat in [individual_chat, group_chat]:
+    messages = get_chat_messages(
+        chat["chat_id"],
+        limit=50,
+        contact_names=contact_names,
+    )
+
+    print("\nCHAT:", chat["conversation_label"])
+    print("PARTICIPANTS:", chat["participants"])
+    print("FIRST SENDERS:", [message["sender"] for message in messages[:5]])
+
+    chunks = create_chunks_from_messages(
+        messages,
+        conversation_id=chat["conversation_id"],
+        conversation_label=chat["conversation_label"],
+    )
+
+    print("\nFIRST CLEAN CHUNK:")
+    print(chunks[0]["display_text"])
+
+    print("\nFIRST EMBEDDING CHUNK:")
+    print(chunks[0]["embedding_text"])
+
+    print("\nMETADATA:")
+    print(chunks[0]["metadata"])
+'''
+
+
+
+
+'''
 queries = [
     "nova transcript for dual enrollment",
     "did i get any free AI credits?"
@@ -31,23 +106,12 @@ for q in queries:
         print(r["text"][:200])
         print("---")
     print("\n")
-
+'''
 
 '''
 clear_collection("gmail")
 ingest_all_primary_emails(max_threads=300)
 '''
-
-
-
-
-
-
-
-
-
-
-
 
 '''
 def check_labels_for_recent_emails(count=50):
