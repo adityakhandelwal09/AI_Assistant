@@ -1,5 +1,6 @@
 import base64
 from config.auth import get_google_service
+from tools.gmail_utils import html_to_clean_text
 
 service = get_google_service("gmail", "v1")
 
@@ -55,6 +56,7 @@ def get_body_from_parts(parts):
                 html_fallback = result
     
     return html_fallback, "html"
+
 
 #given a message ID, retrieves the full email content (including body) and decodes it from base64
 def get_email_content(message_id):

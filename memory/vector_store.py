@@ -79,7 +79,7 @@ def add_chunks(chunks, collection_name):
     collection = collections[collection_name]
     
     for i, chunk in enumerate(chunks):
-        embedding = embed_text(chunk["embedding_text"])  # embed the clean version
+        embedding = embed_text(chunk["embedding_text"])
         metadata = chunk["metadata"]
         chunk_id = (
             f"{collection_name}_"
@@ -91,7 +91,7 @@ def add_chunks(chunks, collection_name):
         collection.add(
             ids=[chunk_id],
             embeddings=[embedding],
-            documents=[chunk["embedding_text"]],  # store the contextualized version
+            documents=[chunk.get("display_text", chunk["embedding_text"])],
             metadatas=[metadata]
         )
 
