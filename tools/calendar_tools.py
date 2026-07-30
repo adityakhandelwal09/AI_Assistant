@@ -3,35 +3,78 @@ from datetime import datetime, timedelta
 from config.auth import get_google_service
 service = get_google_service("calendar", "v3")
 
+
+def list_calendars():
+    #fetches every calendar visible to the authenticated Google account.
+    calendars = []
+    page_token = None
+    while True:
+        response = service.calendarList().list(
+            showHidden=False,
+            pageToken=page_token,
+        ).execute()
+        calendars.extend(response.get("items", []))
+        page_token = response.get("nextPageToken")
+        if not page_token:
+            return calendars
+
+
+def list_calendar_events(time_min=None, time_max=None, max_events=None, calendar_ids=None):
+    #fetches events from every selected calendar, if calendar_ids=None, fetches all
+    calendars = list_calendars()
+    if calendar_ids is not None:
+        calendar_ids = set(calendar_ids)
+        calendars = [c for c in calendars if c["id"] in calendar_ids]
+
+    events = []
+    for calendar in calendars:
+        page_token = None
+        calendar_id = calendar["id"]
+        calendar_name = calendar.get("summary") or calendar_id
+
+        while True:
+            request = {
+                "calendarId": calendar_id,
+                "singleEvents": True,
+                "showDeleted": False,
+                "orderBy": "startTime",
+                "pageToken": page_token,
+            }
+            if time_min:
+                request["timeMin"] = time_min
+            if time_max:
+                request["timeMax"] = time_max
+            if max_events is not None:
+                request["maxResults"] = min(max_events - len(events), 2500)
+
+            response = service.events().list(**request).execute()
+            for event in response.get("items", []):
+                events.append({
+                    **event,
+                    "calendar_id": calendar_id,
+                    "calendar_name": calendar_name,
+                })
+
+            if max_events is not None and len(events) >= max_events:
+                return events[:max_events]
+
+            page_token = response.get("nextPageToken")
+            if not page_token:
+                break
+
+    return events
+
 def get_events(date_str):
-    datetime_obj = datetime.fromisoformat(date_str) #use fromisoformat only when the input is in ISO format (YYYY-MM-DD) otherwise use strptime with the appropriate format string
+    #convenience wrapper: all events on a single day, formatted for agent/LLM use
+    datetime_obj = datetime.fromisoformat(date_str)
     time_min = datetime_obj.replace(hour=0, minute=0, second=0)
     time_max = datetime_obj.replace(hour=23, minute=59, second=59)
+    #adds the local timezone because Google Calendar requires RFC 3339 offsets.
+    eastern = pytz.timezone("US/Eastern")
+    eastern_time_min = eastern.localize(time_min).isoformat()
+    eastern_time_max = eastern.localize(time_max).isoformat()
+    return list_calendar_events(eastern_time_min, eastern_time_max)
 
-    eastern = pytz.timezone('US/Eastern')
-    eastern_min_time = eastern.localize(time_min).isoformat() #localize the naive datetime object to the Eastern timezone and convert it to ISO format string
-    eastern_max_time = eastern.localize(time_max).isoformat()
-
-    events_results = service.events().list(calendarId='primary', timeMin=eastern_min_time, timeMax=eastern_max_time, singleEvents=True, orderBy="startTime").execute()
-    events = events_results.get("items", [])
-    event_dict = {}
-    for event in events:
-        start_time = event.get("start").get("dateTime", event.get("start").get("date"))
-        start_dt = datetime.fromisoformat(start_time)
-        end_time = event.get("end").get("dateTime", event.get("end").get("date"))
-        end_dt = datetime.fromisoformat(end_time)
-        if "T" in start_time:
-            start_time = start_dt.strftime("%A, %B %d at %I:%M %p ET") #day of week, month, day, time in 12-hour format with AM/PM
-            end_time = end_dt.strftime("%A, %B %d at %I:%M %p ET")
-        #print(f"Event: {event_name}, Start: {start_time}, End: {end_time}, ID: {event_id}, Description: {event_description}")
-        event_dict = { 
-            "title": event.get("summary", "No Title"),
-            "start": start_time,
-            "end": end_time,
-            "event_id": event.get("id"),
-            "description": event.get("description", "No Description"),
-        }
-    return event_dict
 
 def build_event_body(title, start_datetime, end_datetime, all_day, description=""):
     start_datetime = datetime.fromisoformat(start_datetime)
@@ -87,5 +130,3 @@ def edit_event(title, start_datetime, end_datetime, all_day, event_id, descripti
         "status": "updated"
     }
 
-
-    

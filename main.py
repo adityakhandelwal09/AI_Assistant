@@ -5,7 +5,7 @@ from datetime import date, timedelta
 import os
 from config.auth import get_google_service
 from memory.rag_ingestion.gmail_ingestion import get_thread_messages
-from tools.calendar_tools import get_events, create_event, delete_event, edit_event
+from tools.calendar_tools import get_events, create_event, delete_event, edit_event, list_calendars, list_calendar_events
 from tools.gmail_tools import search_emails, get_email_content, draft_email
 from agents.agent import run_agent
 from tools.imessage_tools import search_messages, get_conversation
@@ -15,7 +15,36 @@ from memory.vector_store import add_chunks, search, generate_query_variations, m
 from memory.rag_ingestion.gmail_ingestion import ingest_all_primary_emails, create_chunk
 from memory.rag_ingestion.imessage_ingestion import ingest_all_imessages, load_contact_names, list_imessage_chats, get_chat_messages, create_chunks_from_messages
 from dotenv import load_dotenv 
+from collections import Counter
+from memory.rag_ingestion.calendar_ingestion import create_event_chunks
+
 load_dotenv()
+
+'''
+history = load_history()
+content = history_to_content(history)
+
+if history:
+    print(f"Welcome back! Loaded {len(history)} previous messages.")
+else:
+    print("Starting fresh conversation.")
+
+while True:
+    user_input = input("Ask Away: ")
+    if user_input.lower() == "quit":
+        break
+    
+    # add user message to history
+    history = add_to_history(history, "user", user_input)
+    
+    response_text, content = run_agent(user_input, content)
+    print()
+    print(f"ARIA: {response_text}")
+    
+    # add ARIA's response to history
+    history = add_to_history(history, "model", response_text)
+'''
+
 '''
 contact_names = load_contact_names()
 chats = list_imessage_chats(contact_names)
@@ -23,7 +52,46 @@ for chat in chats:
     if "viola" in chat["conversation_label"].lower():
         print(chat["chat_id"], chat["conversation_label"], chat["participants"])
 '''
+  
+calendars = list_calendars()
+print("VISIBLE CALENDARS:")
+for calendar in calendars:
+    print("-", calendar.get("summary"), "|", calendar["id"])
 
+events = list_calendar_events(
+    time_min="2026-07-01T00:00:00-04:00",
+    time_max="2026-08-31T23:59:59-04:00",
+    max_events=20,
+)
+
+
+chunks = [create_event_chunks(event)[0] for event in events]
+
+clear_collection("calendar")  # deletes current calendar vectors
+add_chunks(chunks, "calendar")
+
+results = multi_query_search("when am I meeting with hrishi and lakshitha", "calendar")
+for result in results:
+    print(result["text"])
+    print("---")
+
+'''   
+print("\nEVENTS BY CALENDAR:")
+for calendar_name, count in Counter(event["calendar_name"] for event in events).items():
+    print("-", calendar_name, ":", count)
+
+for event in events:
+    chunk = create_event_chunks(event)[0]
+    print("\nCLEAN EVENT CHUNK:")
+    print(chunk["display_text"])
+    print("\nMETADATA:")
+    print(chunk["metadata"])
+'''
+
+
+
+
+'''
 print()
 
 queries = [
@@ -40,7 +108,7 @@ for q in queries:
         print(result["metadata"]["conversation_label"])
         print("---")
 
-
+'''
 
 '''
 clear_collection("imessage")
