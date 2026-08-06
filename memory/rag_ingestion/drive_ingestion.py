@@ -519,6 +519,7 @@ def ingest_drive_files(max_files=None, include_shared=False):
     files = list_drive_files(max_files=max_files, include_shared=include_shared)
     all_chunks = []
     skipped_files = []
+    next_progress_report = 40
 
     for file in files:
         try:
@@ -541,7 +542,9 @@ def ingest_drive_files(max_files=None, include_shared=False):
                 skipped_files.append((file.get("name", file["id"]), "No extractable text."))
                 continue
             all_chunks.extend(chunks)
-            print(f"Processed {file.get('name', file['id'])} ({len(chunks)} chunks)")
+            if len(all_chunks) >= next_progress_report:
+                print(f"Drive progress: {len(all_chunks)} chunks prepared.")
+                next_progress_report = len(all_chunks) + 40
         except Exception as error:
             skipped_files.append((file.get("name", file["id"]), str(error)))
             print(f"Skipped {file.get('name', file['id'])}: {error}")

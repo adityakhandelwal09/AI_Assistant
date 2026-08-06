@@ -198,6 +198,7 @@ def ingest_thread_id(thread_ids):
     #Ingest a list of Gmail thread IDs into the vector store.
     processed_thread_ids = set()
     total_chunks_added = 0
+    next_progress_report = 40
 
     for thread_id in thread_ids:
         if thread_id in processed_thread_ids:
@@ -211,7 +212,9 @@ def ingest_thread_id(thread_ids):
             add_chunks(chunks, "gmail")
             total_chunks_added += len(chunks)
             processed_thread_ids.add(thread_id)
-            print(f"Processed thread: {thread_id} ({len(chunks)} chunks)")
+            if total_chunks_added >= next_progress_report:
+                print(f"Gmail progress: {total_chunks_added} chunks ingested.")
+                next_progress_report = total_chunks_added + 40
         except Exception as e:
             print(f"Error processing thread {thread_id}: {e}")
             continue

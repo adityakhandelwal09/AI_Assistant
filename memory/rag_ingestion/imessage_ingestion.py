@@ -577,6 +577,7 @@ def get_chat_messages(chat_id, limit=None, contact_names=None):
 def ingest_conversations(phone_numbers, limit_per_conversation=500, time_window_minutes=DEFAULT_TIME_WINDOW_MINUTES):
     #create and add chunks for each supplied one-to-one iMessage conversation
     total_chunks_added = 0
+    next_progress_report = 40
     #loads Contacts once so every requested conversation reuses the same mapping.
     contact_names = load_contact_names()
     for phone_number in dict.fromkeys(phone_numbers):
@@ -592,7 +593,9 @@ def ingest_conversations(phone_numbers, limit_per_conversation=500, time_window_
 
             add_chunks(chunks, "imessage")
             total_chunks_added += len(chunks)
-            print(f"Processed iMessage conversation {phone_number} ({len(chunks)} chunks)")
+            if total_chunks_added >= next_progress_report:
+                print(f"iMessage progress: {total_chunks_added} chunks ingested.")
+                next_progress_report = total_chunks_added + 40
         except Exception as error:
             print(f"Error processing iMessage conversation {phone_number}: {error}")
 
@@ -615,6 +618,7 @@ def ingest_all_imessages(max_chats=None, max_messages_per_chat=None, time_window
 
     total_chunks_added = 0
     processed_chats = 0
+    next_progress_report = 40
     for chat in chats:
         try:
             #retrieves the complete text history for this one chat by default.
@@ -640,10 +644,9 @@ def ingest_all_imessages(max_chats=None, max_messages_per_chat=None, time_window
             add_chunks(chunks, "imessage")
             processed_chats += 1
             total_chunks_added += len(chunks)
-            print(
-                f"Processed {chat['conversation_label']} "
-                f"({len(messages)} messages, {len(chunks)} chunks)"
-            )
+            if total_chunks_added >= next_progress_report:
+                print(f"iMessage progress: {total_chunks_added} chunks ingested.")
+                next_progress_report = total_chunks_added + 40
         except Exception as error:
             #continues with the remaining chats if one chat cannot be read or embedded.
             print(f"Error processing {chat['conversation_label']}: {error}")
