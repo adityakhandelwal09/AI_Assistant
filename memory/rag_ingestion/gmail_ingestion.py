@@ -117,7 +117,7 @@ def create_chunk(thread_id):
         
         text_chunks = chunk_text(turn["content"])
         
-        for chunk in text_chunks:
+        for chunk_index, chunk in enumerate(text_chunks):
             if chunk in seen_chunk_texts:
                 continue
             seen_chunk_texts.add(chunk)
@@ -127,6 +127,7 @@ def create_chunk(thread_id):
             )
             
             all_chunks.append({
+                "chunk_id": f"gmail_{thread_id}_{turn['message_id']}_{chunk_index}",
                 "embedding_text": embedding_text,  # include subject/context so retrieval can match on it
                 "display_text": chunk,
                 "metadata": {

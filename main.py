@@ -17,9 +17,64 @@ from memory.rag_ingestion.imessage_ingestion import ingest_all_imessages, load_c
 from dotenv import load_dotenv 
 from collections import Counter
 from memory.rag_ingestion.calendar_ingestion import create_event_chunks
+from memory.rag_ingestion.drive_ingestion import (list_drive_files, extract_file_sections, create_file_chunks, create_presentation_chunks, GOOGLE_PRESENTATION_MIME_TYPE)
 
 load_dotenv()
 
+
+
+
+files = list_drive_files(max_files=1)
+
+print("FILES SELECTED:")
+for index, file in enumerate(files, start=1):
+    print(f"{index}. {file['name']} | {file.get('mimeType')}")
+
+all_chunks = []
+
+for file in files:
+    try:
+        sections = extract_file_sections(file)
+        if file.get("mimeType") == GOOGLE_PRESENTATION_MIME_TYPE:
+            chunks = create_presentation_chunks(file, sections)
+        else:
+            chunks = []
+            for section in sections:
+                chunks.extend(
+                    create_file_chunks(
+                        file,
+                        section["text"],
+                        section_id=section["section_id"],
+                        section_title=section["section_title"],
+                        section_label=section["section_label"],
+                    )
+                )
+
+        print(f"\nFILE: {file['name']}")
+        print(f"EXTRACTED WORDS: {sum(len(section['text'].split()) for section in sections)}")
+        print(f"CHUNKS: {len(chunks)}")
+
+        if chunks:
+            print("\nFIRST CHUNK:")
+            print(chunks[0]["display_text"])
+            print()
+
+        all_chunks.extend(chunks)
+
+    except Exception as error:
+        print(f"\nSKIPPED: {file['name']} — {error}")
+
+#this writes only the successfully extracted test chunks to Chroma.
+'''
+add_chunks(all_chunks, "drive")
+
+results = multi_query_search("janelia hhmi project", "drive")
+
+print("\nRETRIEVAL RESULTS:")
+for result in results[:2]:
+    print(result["text"])
+    print("---")
+'''
 '''
 history = load_history()
 content = history_to_content(history)
@@ -52,7 +107,7 @@ for chat in chats:
     if "viola" in chat["conversation_label"].lower():
         print(chat["chat_id"], chat["conversation_label"], chat["participants"])
 '''
-  
+'''
 calendars = list_calendars()
 print("VISIBLE CALENDARS:")
 for calendar in calendars:
@@ -74,6 +129,7 @@ results = multi_query_search("when am I meeting with hrishi and lakshitha", "cal
 for result in results:
     print(result["text"])
     print("---")
+'''
 
 '''   
 print("\nEVENTS BY CALENDAR:")

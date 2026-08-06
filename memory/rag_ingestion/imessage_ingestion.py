@@ -344,6 +344,7 @@ def create_chunks_from_messages(
             )
             all_chunks.append(
                 {
+                    "chunk_id": f"imessage_{conversation_id}_{group_index}_{chunk_index}",
                     "embedding_text": embedding_text,
                     "display_text": display_chunk,
                     "metadata": {

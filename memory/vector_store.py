@@ -81,14 +81,9 @@ def add_chunks(chunks, collection_name):
     for i, chunk in enumerate(chunks):
         embedding = embed_text(chunk["embedding_text"])
         metadata = chunk["metadata"]
-        chunk_id = (
-            f"{collection_name}_"
-            f"{metadata.get('thread_id', 'thread')}_"
-            f"{metadata.get('message_id', 'message')}_"
-            f"{i}"
-        )
+        chunk_id = chunk.get("chunk_id") #each ingestion pipeline creates its own meaningful chunk_id
         
-        collection.add(
+        collection.upsert(
             ids=[chunk_id],
             embeddings=[embedding],
             documents=[chunk.get("display_text", chunk["embedding_text"])],

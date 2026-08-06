@@ -107,6 +107,7 @@ def create_event_chunks(event):
     #location, participants, and description always remain together.
     return [
         {
+            "chunk_id": f"calendar_{calendar_id}_{event_id}_details",
             "embedding_text": display_text,
             "display_text": display_text,
             "metadata": {
